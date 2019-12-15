@@ -7,7 +7,8 @@ import importlib
 import configparser
 class CMDLine(Cmd):
     module_list = ["BASE"]
-    prompt = ">>> "
+    prompt_f = green("{}{}{} ")
+    prompt = ""
     options = None
     module = None
     base = "BASE/"
@@ -17,7 +18,10 @@ class CMDLine(Cmd):
     module_name = "" #name like Web.PHP.mt_seed
     config = None
     completions = dict()
+    def prompt_format(self,module='',prompt="fuck",workplace='None'):
+        self.prompt = self.prompt_f.format(blue(module),green(prompt),blue("(")+red(workplace)+blue(")"))
     def init(self):
+        self.prompt_format()
         self.config = configparser.RawConfigParser()
         self.config.read('config.ini')
         self.record_file = self.config["header"]["record_file"]
@@ -38,9 +42,9 @@ class CMDLine(Cmd):
 
     def __init__(self):
         Cmd.__init__(self)
-        print("initializing...")
+        print(blue("initializing..."))
         self.init()
-        print('done')
+        print(blue('done'))
     def emptyline(self):
         pass
 
@@ -48,7 +52,8 @@ class CMDLine(Cmd):
         try:
             self.module = importlib.import_module("BASE."+arg)
             self.module = self.module.Module()
-            self.prompt = "["+arg+"]" + ">>> "
+            self.prompt_format(module=("["+arg+"]"), workplace=self.current_workplace.workplace_name
+            if self.current_workplace != None else 'None')
             self.module_name = arg
             self.completions["set"] = list(self.module.getOptions().keys())
         except Exception as e:
@@ -83,13 +88,16 @@ class CMDLine(Cmd):
                     return
                 workplace = WorkPlace(args[1])
                 self.current_workplace = workplace
-            elif arg[0] == "use":
+            elif args[0] == "use":
                 args[1] = args[1].strip()
                 if args[1] == "":
                     print_warning("Must select your workplace")
                     return
                 workplace = WorkPlace(args[1])
                 self.current_workplace = workplace
+                self.prompt_format(module=self.module_name,workplace=self.current_workplace.workplace_name
+                                    if self.current_workplace!=None else 'None')
+
         except Exception as e:
             print(e)
 
@@ -97,6 +105,7 @@ class CMDLine(Cmd):
         cache = self.module.run()
         if arg.strip() == "-save":
             self.current_workplace.save(cache,self.module_name)
+
 
     def do_exit(self,arg):
         exit(0)

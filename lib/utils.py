@@ -9,13 +9,13 @@ def print_info(info:dict):
         print("{}:{}".format(i,info[i]))
 
 def print_error(msg:str):
-    print("[Error]:",msg)
+    print(red("[Error]:"),msg)
 
 def print_warning(msg:str):
-    print("[Warning]:",msg)
+    print(yellow("[Warning]:"),msg)
 
 def print_info(msg:str):
-    print("[Info]:",msg)
+    print(green("[Info]:"),msg)
 
 def strArrayToPointer(strArray:list):
     res = (c_char_p)*(len(strArray))()
@@ -23,3 +23,15 @@ def strArrayToPointer(strArray:list):
         res[i] = c_char_p(i)
 
     return res
+
+def red(msf):
+    return "\033[1;31m{}\033[39m".format(msf)
+
+def blue(msf):
+    return "\033[1;34m{}\033[39m".format(msf)
+
+def green(msf):
+    return "\033[1;32m{}\033[39m".format(msf)
+
+def yellow(msf):
+    return "\033[1;34m{}\033[39m".format(msf)
