@@ -1,3 +1,4 @@
-from lib.toolutils.imgutils.utils import get_binary_image
+from lib.http.httpclient import HttpClientAsync
 
-print(type(get_binary_image(open("/root/图片/1.png","rb").read())))
+client = HttpClientAsync(["https://www.baidu.com" for i in range(30)],method="get",params="3=3")
+client.sendall(print)
