@@ -32,10 +32,10 @@ class CMDLine(Cmd):
     def do_info(self,arg):
         print_info(self.module.getInfo())
         
-    def do_set(self,arg):
+    def do_set(self,arg:str):
         try:
-            key = arg.split(" ")[0]
-            value = arg.split(" ")[1]
+            key = arg[:arg.find(" ")]
+            value = arg[arg.find(" ")+1:]
             self.module.setOption(key,value)
 
         except:

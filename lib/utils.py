@@ -1,3 +1,4 @@
+from ctypes import *
 def print_options(options:dict):
     for i in options.keys():
         print("{}:{}".format(i,options[i]))
@@ -16,3 +17,9 @@ def print_warning(msg:str):
 def print_info(msg:str):
     print("[Info]:",msg)
 
+def strArrayToPointer(strArray:list):
+    res = (c_char_p)*(len(strArray))()
+    for i in range(len(strArray)):
+        res[i] = c_char_p(i)
+
+    return res
