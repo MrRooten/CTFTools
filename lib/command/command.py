@@ -137,6 +137,7 @@ class CMDLine(Cmd):
         return [s for s in self.completions["use"] if s.startswith(mline)]
 
 def main():
+    banner()
     importlib.import_module("BASE")
     parse = CMDLine()
     parse.cmdloop()
