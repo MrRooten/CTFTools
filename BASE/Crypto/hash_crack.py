@@ -13,21 +13,21 @@ class Module(BaseModule):
                 "Descript":"crack hash algorithm"
                 }
     __options__ = {
-        "algorithm":None,
-        "start":None,
-        "end":None,
-        "target":None
+        "algorithm":{"args":"","necessity":True,"description":"hash algorithm"},
+        "start":{"args":"","necessity":True,"description":"start index of hash"},
+        "end":{"args":"","necessity":True,"description":"end index of hash"},
+        "target":{"args":"","necessity":True,"description":"need hash[start:end]==target"}
     }
 
     def run(self):
         try:
             print(self.__options__)
-            hash_algorithm = self.__options__["algorithm"]
+            hash_algorithm = self.__options__["algorithm"]["args"]
             exec("from hashlib import "+hash_algorithm)
             module = eval(hash_algorithm)
-            start = int(self.__options__["start"])
-            end = int(self.__options__["end"])
-            target = self.__options__["target"]
+            start = int(self.__options__["start"]["args"])
+            end = int(self.__options__["end"]["args"])
+            target = self.__options__["target"]["args"]
             i = 0
             while True:
                 if i % 100000 == 0:

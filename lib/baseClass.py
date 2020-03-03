@@ -15,4 +15,4 @@ class BaseModule(object):
         pass
 
     def setOption(self,key,value):
-        self.__options__[key] = value
+        self.__options__[key]["args"] = value

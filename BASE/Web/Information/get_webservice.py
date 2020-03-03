@@ -1,8 +1,8 @@
-from lib import baseClass
+from lib.baseClass import BaseModule
 
-class Module(baseClass):
+class Module(BaseModule):
     __options__ = {
-        "url":None,
+        "url":{"args":"","necessity":True,"description":""},
     }
 
     __info__ = {

@@ -1,8 +1,7 @@
 from lib.baseClass import BaseModule
 
-def format_list(template:str):
 
 class Module(BaseModule):
-    __options__ = {"payload":None}
+    __options__ = {"payload":{"args":"","necessity":True,"description":""}}
     def run(self):
         pass

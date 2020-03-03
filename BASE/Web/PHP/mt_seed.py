@@ -6,7 +6,7 @@ class Module(BaseModule):
                 "options":"""
                 args -> VALUE_OR_MATCH_MIN [MATCH_MAX [RANGE_MIN RANGE_MAX]] ...
                 """}
-    __options__ = {"args":None}
+    __options__ = {"args":{"args":"","necessity":True,"description":"VALUE_OR_MATCH_MIN [MATCH_MAX [RANGE_MIN RANGE_MAX]]"}}
     def run(self):
         pass
 

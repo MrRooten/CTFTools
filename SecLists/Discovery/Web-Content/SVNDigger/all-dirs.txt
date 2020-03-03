@@ -1,3 +1,6 @@
+index.html
+index.php
+test.php
 common
 CVS
 root
