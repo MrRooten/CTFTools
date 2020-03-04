@@ -1,6 +1,7 @@
 import aiohttp
 import requests
 import asyncio
+
 import pdb
 class HtppClientSync:
     hosts = []
@@ -17,8 +18,7 @@ class HtppClientSync:
         pass
 
 class HttpClientAsync:
-    hosts = []
-    def __init__(self,urls,method="get",headers={},data=b"",params=b""):
+    def __init__(self,urls,method="get",headers={},data=b"",params=b"",ssl=False):
         self.loop = asyncio.get_event_loop()
         self.urls = urls
         self.optional = {
@@ -28,41 +28,45 @@ class HttpClientAsync:
             "params":params
         }
         self.results = {}
+        self.hosts = []
+        self.ssl = ssl
 
     def appendHost(self,host):
         self.hosts.append(host)
 
-    async def _sendall(self,func):
+    async def _sendall(self,handler):
         async with aiohttp.ClientSession() as session:
             headers = self.optional["headers"]
             res = None
+            self.count = 0
             for i in self.urls:
                 if self.optional["method"].lower() == "get":
-                    async with session.get(i,params=self.optional["params"],headers=headers) as response:
+                    async with session.get(i,params=self.optional["params"],headers=headers,ssl=self.ssl) as response:
                         self.results[i] = response
                         res = response
                 elif self.optional["method"].lower() == "post":
-                    async with session.post(i,data=self.optional["data"],headers=headers) as response:
+                    async with session.post(i,data=self.optional["data"],headers=headers,ssl=self.ssl) as response:
                         self.results[i] = response
                         res = response
                 elif self.optional["method"].lower() == "head":
-                    async with session.head(i,headers=headers) as response:
+                    async with session.head(i,headers=headers,ssl=self.ssl) as response:
                         self.results[i] = response
                         res = response
                 elif self.optional["method"].lower() == "put":
-                    async with session.put(i,headers=headers,data=self.optional["data"]) as response:
+                    async with session.put(i,headers=headers,data=self.optional["data"],ssl=self.ssl) as response:
                         self.results[i] = response
                         res = response
                 elif self.optional["method"].lower() == "delete":
-                    async with session.delete(i,headers=headers) as response:
+                    async with session.delete(i,headers=headers,ssl=self.ssl) as response:
                         self.results[i] = response
                         res = response
                 elif self.optional["method"].lower() == "options":
                     async with session.options(i,headers=headers):
                         self.results[i] = response
                         res = response
+                self.count += 1
 
-                func(res)
+                handler(res,self.count)
 
     def sendall(self,func):
         self.loop.run_until_complete(self._sendall(func))

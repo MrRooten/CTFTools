@@ -102,9 +102,14 @@ class CMDLine(Cmd):
             print(e)
 
     def do_run(self,arg):
-        cache = self.module.run()
-        if arg.strip() == "-save":
-            self.current_workplace.save(cache,self.module_name)
+        try:
+            cache = self.module.run()
+            if arg.strip() == "-save":
+                self.current_workplace.save(cache,self.module_name)
+        except KeyboardInterrupt:
+            pass
+        except Exception as e:
+            print(e)
 
 
     def do_exit(self,arg):

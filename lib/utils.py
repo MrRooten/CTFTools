@@ -1,8 +1,15 @@
 from ctypes import *
 import random
 def print_options(options:dict):
-    for i in options.keys():
-        print("{}:{}".format(i,options[i]))
+    try:
+        print("{:40s}{:40s}{:40s}{}".format(red("args"),red("value"),red("necessity"),red("description")))
+        for option_key in options.keys():
+            print("{:40s}{:40s}{:40s}{}".format(option_key,
+                                               options[option_key]["args"],
+                                               "True" if options[option_key]["necessity"] else "False",
+                                               options[option_key]["description"]))
+    except Exception as e:
+        print(e)
 
 
 def print_info(info:dict):
