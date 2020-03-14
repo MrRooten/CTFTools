@@ -1,4 +1,5 @@
 import importlib
+import os
 import pkgutil
 from cmd import Cmd
 from lib.utils import *
@@ -84,10 +85,13 @@ class CMDLine(Cmd):
             if args[0] == "create":
                 args[1] = args[1].strip()
                 if args[1].strip() == "":
-                    print_warning("Must name your workplace")
+                    workplace = WorkPlace(os.getcwd())
+                    self.current_workplace = workplace
                     return
                 workplace = WorkPlace(args[1])
                 self.current_workplace = workplace
+                self.prompt_format(module=self.module_name, workplace=self.current_workplace.workplace_name
+                if self.current_workplace != None else 'None')
             elif args[0] == "use":
                 args[1] = args[1].strip()
                 if args[1] == "":
@@ -100,6 +104,16 @@ class CMDLine(Cmd):
 
         except Exception as e:
             print(e)
+
+    def do_shell(self,args):
+        if args != "":
+            os.system(args)
+
+        else:
+            try:
+                os.system("bash")
+            except:
+                os.system("sh")
 
     def do_run(self,arg):
         try:

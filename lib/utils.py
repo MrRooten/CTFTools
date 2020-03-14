@@ -41,9 +41,12 @@ def blue(msf):
 def green(msf):
     return "\033[1;32m{}\033[39m".format(msf)
 
+
 def yellow(msf):
     return "\033[1;34m{}\033[39m".format(msf)
 
+def get_platform():
+    pass
 def banner():
     banner = []
     banner.append(("""

@@ -11,6 +11,7 @@ class Module(BaseModule):
                    "notfound_identification":{"args":"","necessity":False,"description":"use regex to get not found page"},
                    "headers":{"args":"","necessity":False,"description":"headers of request"},
                    "ssl":{"args":"False","necessity":False,"description":"use ssl or not"},
+                   "word":{"args":"","necessity":False,"description":"if word exists then "},
                    "post":{"args":"","necessity":False,"description":"post data"}}
 
     def _getSuffixURL(self):
@@ -32,14 +33,16 @@ class Module(BaseModule):
                         urls.append(url+file[:-1])
                     else:
                         urls.append(url+file[:-1]+"."+suffix)
+                        urls.append(url+file[:-1])
 
 
         return urls
     def _get404Error(self):
         pass
 
-    def handler(self,args,count):
-        if args.status == 404:
+    def handler(self,args,count,text):
+        word = self.__options__["word"]["args"]
+        if args.status == 404 or word in text:
             if count % 33 == 0:
                 print("\rAlready scan:",count,end='')
                 sys.stdout.flush()
@@ -50,7 +53,7 @@ class Module(BaseModule):
         try:
             if self.__options__["notfound_identification"]["args"] == "":
                 status = 404
-            httpClient = HttpClientAsync(self._getSuffixURL(),data=self.__options__["post"]["args"],method="post")
+            httpClient = HttpClientAsync(self._getSuffixURL(),data=self.__options__["post"]["args"],method="get")
 
             httpClient.sendall(self.handler)
         except Exception as e:
