@@ -1,4 +1,16 @@
-from lib.net.http.httpclient import HttpClientAsync
+from db.model import Module
+from sqlalchemy import *
+from sqlalchemy.orm import *
+'''
+engine = create_engine("sqlite:///:memory:")
+Module.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
 
-client = HttpClientAsync(["https://0.0.0.0:4443/login" for i in range(30)],method="post",data="abcdefg")
-client.sendall(print)
+module = Module(m_name='abc',m_path='path',m_type='type',description='descript')
+session.add(module)
+session.commit()
+
+'''
+
+from db.operationDB import *

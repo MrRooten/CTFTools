@@ -1,5 +1,10 @@
 from ctypes import *
 import random
+import configparser
+config = configparser.RawConfigParser() #Global config
+config.read("config.ini")
+
+
 def print_options(options:dict):
     try:
         print("{:40s}{:40s}{:40s}{}".format(red("args"),red("value"),red("necessity"),red("description")))
@@ -41,12 +46,28 @@ def blue(msf):
 def green(msf):
     return "\033[1;32m{}\033[39m".format(msf)
 
-
 def yellow(msf):
     return "\033[1;34m{}\033[39m".format(msf)
-
+'''
+get what is SuperTools running on
+'''
 def get_platform():
     pass
+'''
+write config
+'''
+def config_write(header,args,value):
+    config.set(header,args,value)
+    with open("config.ini","w+") as f:
+        config.write(f)
+
+'''
+read config 
+'''
+def config_read(header,args):
+    return config[header][args]
+
+
 def banner():
     banner = []
     banner.append(("""

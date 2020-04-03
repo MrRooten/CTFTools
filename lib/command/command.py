@@ -5,81 +5,90 @@ from cmd import Cmd
 from lib.utils import *
 from lib.workplace import WorkPlace
 import importlib
-import configparser
+
+
 class CMDLine(Cmd):
     module_list = ["BASE"]
-    prompt_f = green("{}{}{} ")
-    prompt = ""
+    prompt_f = green("{}{}{} ") #prompt format
+    prompt = "" #prompt string
     options = None
     module = None
-    base = "BASE/"
+    base = "BASE/" #where the module base of path
     file = None
-    record_file = None
-    current_workplace = None #current working place
-    module_name = "" #name like Web.PHP.mt_seed
-    config = None
-    completions = dict()
-    def prompt_format(self,module='',prompt="fuck",workplace='None'):
-        self.prompt = self.prompt_f.format(blue(module),green(prompt),blue("(")+red(workplace)+blue(")"))
+    record_file = None #use to record the command history
+    current_workplace = None  # current working place
+    module_name = ""  # name like Web.PHP.mt_seed
+    completions = dict() #tab completion dict
+
+    def prompt_format(self, module='', prompt="fuck", workplace='None'):
+        self.prompt = self.prompt_f.format(blue(module), green(prompt), blue("(") + red(workplace) + blue(")"))
+
     def init(self):
         self.prompt_format()
-        self.config = configparser.RawConfigParser()
-        self.config.read('config.ini')
-        self.record_file = self.config["header"]["record_file"]
-        #for autocompletion of use module
+        self.record_file = config_read("header","record_file")
+        # for autocompletion of use module
         self.completions["use"] = list()
+
         def _get_modules(name):
             m = None
-            for _,module,_ in pkgutil.iter_modules([name]):
+            for _, module, _ in pkgutil.iter_modules([name]):
                 m = module
-                _get_modules(name+module+"/")
+                _get_modules(name + module + "/")
             else:
-                if m !=None:
+                if m != None:
                     _ = name + m
-                    self.completions["use"].append(_.replace("/",".")[5:])
+                    self.completions["use"].append(_.replace("/", ".")[5:])
+
         _get_modules("BASE/")
-
-
 
     def __init__(self):
         Cmd.__init__(self)
         print(blue("initializing..."))
         self.init()
         print(blue('done'))
+
     def emptyline(self):
         pass
 
-    def do_use(self,arg):
+    '''
+    
+    '''
+
+    def do_use(self, arg):
         try:
-            self.module = importlib.import_module("BASE."+arg)
+            self.module = importlib.import_module("BASE." + arg)
             self.module = self.module.Module()
-            self.prompt_format(module=("["+arg+"]"), workplace=self.current_workplace.workplace_name
+            self.prompt_format(module=("[" + arg + "]"), workplace=self.current_workplace.workplace_name
             if self.current_workplace != None else 'None')
             self.module_name = arg
             self.completions["set"] = list(self.module.getOptions().keys())
         except Exception as e:
             print_error(e)
 
-    def do_ls(self,arg):
-        for _,module,_ in pkgutil.iter_modules(["BASE/"+arg.replace('.','/')]):
+    '''
+    ls: list the modules
+    '''
+
+    def do_ls(self, arg):
+        for _, module, _ in pkgutil.iter_modules(["BASE/" + arg.replace('.', '/')]):
             print(module)
 
-    def do_options(self,arg):
+    def do_options(self, arg):
         print_options(self.module.getOptions())
 
-    def do_info(self,arg):
+    def do_info(self, arg):
         print_info(self.module.getInfo())
-        
-    def do_set(self,arg:str):
+
+    def do_set(self, arg: str):
         try:
             key = arg[:arg.find(" ")]
-            value = arg[arg.find(" ")+1:]
-            self.module.setOption(key,value)
+            value = arg[arg.find(" ") + 1:]
+            self.module.setOption(key, value)
 
         except:
             pass
 
-    def do_workplace(self,arg:str):
+    def do_workplace(self, arg: str):
         try:
             args = arg.split(" ")
             if args[0] == "create":
@@ -99,38 +108,33 @@ class CMDLine(Cmd):
                     return
                 workplace = WorkPlace(args[1])
                 self.current_workplace = workplace
-                self.prompt_format(module=self.module_name,workplace=self.current_workplace.workplace_name
-                                    if self.current_workplace!=None else 'None')
+                self.prompt_format(module=self.module_name, workplace=self.current_workplace.workplace_name
+                if self.current_workplace != None else 'None')
 
         except Exception as e:
             print(e)
 
-    def do_shell(self,args):
-        if args != "":
+    def do_shell(self, args):
+        try:
             os.system(args)
+        except Exception as e:
+            print_error(e)
 
-        else:
-            try:
-                os.system("bash")
-            except:
-                os.system("sh")
-
-    def do_run(self,arg):
+    def do_run(self, arg):
         try:
             cache = self.module.run()
             if arg.strip() == "-save":
-                self.current_workplace.save(cache,self.module_name)
+                self.current_workplace.save(cache, self.module_name)
         except KeyboardInterrupt:
             pass
         except Exception as e:
             print(e)
 
-
-    def do_exit(self,arg):
+    def do_exit(self, arg):
         exit(0)
 
     def do_record(self):
-        self.file = open(self.record_file,"w")
+        self.file = open(self.record_file, "w")
 
     def close(self):
         if self.file:
@@ -142,7 +146,7 @@ class CMDLine(Cmd):
         with open(self.record_file) as f:
             self.cmdqueue.extend(f.read().splitlines())
 
-    def complete_set(self,text,line,begidx,endidx):
+    def complete_set(self, text, line, begidx, endidx):
         mline = line.partition(' ')[2]
         offs = len(line) - len(text)
         lines = []
@@ -151,9 +155,10 @@ class CMDLine(Cmd):
                 lines.append(s)
         return lines
 
-    def complete_use(self,text,line,begidx,endidx):
+    def complete_use(self, text, line, begidx, endidx):
         mline = line.partition(' ')[2]
         return [s for s in self.completions["use"] if s.startswith(mline)]
+
 
 def main():
     banner()
